@@ -1,0 +1,13 @@
+{
+    "users": [
+        {
+            "id": 1,
+            "firstName": "Demo",
+            "lastName": "User",
+            "email": "demo@jobfinder.com",
+            "password": "Demo1234"
+        }
+    ],
+    "favoritesOffers": [],
+    "applications": []
+}
