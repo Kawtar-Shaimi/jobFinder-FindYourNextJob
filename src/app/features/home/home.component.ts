@@ -29,51 +29,83 @@ import { loadFavorites } from '../../store/favorites/favorites.actions';
   ],
   template: `
     <!-- Hero Section -->
-    <section class="hero">
-      <div class="container">
-        <div class="hero-content">
-          <h1 class="hero-title">Trouvez votre prochaine<br>opportunité avec confiance</h1>
-          <p class="hero-subtitle">Des milliers d'offres d'emploi, mises à jour en temps réel depuis les meilleures sources.</p>
+    <section class="relative pt-32 pb-20 overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-br from-indigo-50/50 via-white to-indigo-50/30 -z-10"></div>
+      <div class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-[600px] h-[600px] bg-indigo-100/30 rounded-full blur-3xl -z-10"></div>
+      
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-12">
+          <h1 class="text-4xl md:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.1] mb-6">
+            Trouvez votre prochaine <span class="text-indigo-600">opportunité</span>
+          </h1>
+          <p class="text-lg text-slate-600 leading-relaxed mb-10">
+            Parcourez des milliers d'offres d'emploi mises à jour en temps réel et propulsez votre carrière vers de nouveaux sommets.
+          </p>
         </div>
 
-        <form [formGroup]="searchForm" (ngSubmit)="onSearch()" class="search-box">
-          <app-search-filters [searchForm]="searchForm"></app-search-filters>
-          <button type="submit" class="btn btn-primary btn-lg search-btn" [disabled]="loading">
-            🔍 Rechercher
-          </button>
-        </form>
+        <!-- Professional Search Box -->
+        <div class="max-w-4xl mx-auto bg-white p-2 rounded-2xl shadow-2xl shadow-indigo-100/50 border border-slate-100">
+          <form [formGroup]="searchForm" (ngSubmit)="onSearch()" class="flex flex-col md:flex-row gap-2">
+            <app-search-filters [searchForm]="searchForm" class="flex-1"></app-search-filters>
+            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-8 py-3.5 rounded-xl transition-all shadow-lg shadow-indigo-200 flex items-center justify-center gap-2 group" [disabled]="loading">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              Trouver un job
+            </button>
+          </form>
+        </div>
       </div>
     </section>
 
-    <!-- Results Section -->
-    <section class="results-section">
-      <div class="container">
+    <!-- Content Section -->
+    <section class="pb-24">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Stats -->
         <app-job-stats
           *ngIf="hasSearched && !loading && totalCount > 0"
           [total]="totalCount"
           [currentPage]="currentPage"
           [totalPages]="totalPages"
+          class="mb-6 block"
         ></app-job-stats>
 
-        <app-spinner *ngIf="loading"></app-spinner>
-
-        <div *ngIf="errorMessage && !loading" class="alert alert-error">
-          ⚠️ {{ errorMessage }}
+        <!-- Loading -->
+        <div class="py-20" *ngIf="loading">
+          <app-spinner></app-spinner>
         </div>
 
-        <div *ngIf="!hasSearched && !loading" class="empty-state">
-          <div class="empty-state-icon">🌟</div>
-          <h3>Commencez votre recherche</h3>
-          <p>Entrez un titre de poste et/ou une localisation pour trouver des offres d'emploi.</p>
+        <!-- Error -->
+        <div *ngIf="errorMessage && !loading" class="bg-red-50 border border-red-100 text-red-700 px-6 py-4 rounded-xl flex items-center gap-3 mb-8 animate-in fade-in duration-300">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <span class="font-medium">{{ errorMessage }}</span>
         </div>
 
-        <div *ngIf="hasSearched && !loading && jobs.length === 0 && !errorMessage" class="empty-state">
-          <div class="empty-state-icon">🔍</div>
-          <h3>Aucune offre trouvée</h3>
-          <p>Essayez des mots-clés différents ou élargissez votre recherche.</p>
+        <!-- Empty state - Initial -->
+        <div *ngIf="!hasSearched && !loading" class="text-center py-20 bg-slate-50/50 border border-dashed border-slate-200 rounded-3xl">
+          <div class="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+             <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+               <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+             </svg>
+          </div>
+          <h3 class="text-xl font-bold text-slate-800 mb-2">Prêt à commencer ?</h3>
+          <p class="text-slate-500 max-w-sm mx-auto">Saisissez un titre de poste ou une ville pour explorer les opportunités disponibles.</p>
         </div>
 
-        <div class="jobs-list" *ngIf="jobs.length > 0 && !loading">
+        <!-- No results -->
+        <div *ngIf="hasSearched && !loading && jobs.length === 0 && !errorMessage" class="text-center py-20">
+          <div class="text-6xl mb-6">🔍</div> <!-- Keeping one search icon for context, but making it modern -->
+          <h3 class="text-2xl font-bold text-slate-800 mb-2">Aucun résultat</h3>
+          <p class="text-slate-500">Désolé, nous n'avons trouvé aucune offre correspondant à vos critères.</p>
+          <button (click)="searchForm.reset()" class="mt-6 text-indigo-600 font-semibold hover:text-indigo-700">Réinitialiser les filtres</button>
+        </div>
+
+        <!-- Job Cards List -->
+        <div class="space-y-4" *ngIf="jobs.length > 0 && !loading">
           <app-job-card
             *ngFor="let job of jobs"
             [job]="job"
@@ -81,26 +113,18 @@ import { loadFavorites } from '../../store/favorites/favorites.actions';
           ></app-job-card>
         </div>
 
-        <app-pagination
-          *ngIf="totalPages > 1 && !loading"
-          [currentPage]="currentPage"
-          [totalPages]="totalPages"
-          (pageChange)="onPageChange($event)"
-        ></app-pagination>
+        <!-- Pagination -->
+        <div class="mt-12 flex justify-center" *ngIf="totalPages > 1 && !loading">
+          <app-pagination
+            [currentPage]="currentPage"
+            [totalPages]="totalPages"
+            (pageChange)="onPageChange($event)"
+          ></app-pagination>
+        </div>
       </div>
     </section>
   `,
-  styles: [`
-    .hero { background: linear-gradient(135deg, #EFF6FF 0%, #F0FDF4 100%); padding: 3.5rem 0 2.5rem; border-bottom: 1px solid var(--border); }
-    .hero-content { text-align: center; margin-bottom: 2rem; }
-    .hero-title { font-size: 2.2rem; font-weight: 700; margin-bottom: 0.75rem; line-height: 1.25; }
-    .hero-subtitle { color: var(--text-secondary); font-size: 1rem; max-width: 520px; margin: 0 auto; }
-    .search-box { background: var(--card); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); padding: 1rem 1.25rem; display: flex; gap: 0.75rem; align-items: stretch; max-width: 800px; margin: 0 auto; }
-    .search-btn { white-space: nowrap; flex-shrink: 0; }
-    .results-section { padding: 2rem 0 3rem; }
-    .jobs-list { display: flex; flex-direction: column; gap: 1rem; }
-    @media (max-width: 768px) { .hero-title { font-size: 1.5rem; } .search-box { flex-direction: column; } }
-  `]
+  styles: []
 })
 export class HomeComponent implements OnInit, OnDestroy {
   searchForm: FormGroup;

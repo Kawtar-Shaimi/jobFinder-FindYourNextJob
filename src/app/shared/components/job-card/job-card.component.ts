@@ -16,70 +16,96 @@ import { TimeAgoPipe } from '../../pipes/time-ago.pipe';
   standalone: true,
   imports: [CommonModule, TimeAgoPipe],
   template: `
-    <div class="job-card card">
-      <div class="job-card-header">
-        <div class="job-info">
-          <h3 class="job-title">{{ job.title }}</h3>
-          <p class="job-company">🏢 {{ job.company }}</p>
+    <div class="bg-white border border-slate-200 rounded-2xl p-6 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-100/40 hover:-translate-y-1 group relative">
+      
+      <!-- Card Header -->
+      <div class="flex justify-between items-start mb-4">
+        <div class="flex-1 min-w-0 pr-8">
+          <h3 class="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition-colors truncate mb-1">
+            {{ job.title }}
+          </h3>
+          <div class="flex items-center gap-2 text-indigo-600 font-semibold text-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+            {{ job.company }}
+          </div>
         </div>
+        
+        <!-- Favorite Button -->
         <button
           *ngIf="isLoggedIn"
-          class="btn-icon fav-btn"
-          [class.active]="isFavorite$ | async"
           (click)="toggleFavorite()"
+          class="absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 group/fav"
+          [class.bg-red-50]="isFavorite$ | async"
+          [class.bg-slate-50]="!(isFavorite$ | async)"
+          [class.text-red-500]="isFavorite$ | async"
+          [class.text-slate-300]="!(isFavorite$ | async)"
           [title]="(isFavorite$ | async) ? 'Retirer des favoris' : 'Ajouter aux favoris'"
         >
-          {{ (isFavorite$ | async) ? '❤️' : '🤍' }}
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 transition-transform group-hover/fav:scale-110" 
+            [attr.fill]="(isFavorite$ | async) ? 'currentColor' : 'none'" 
+            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.84-8.84 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
         </button>
       </div>
 
-      <div class="job-meta">
-        <span class="meta-item">📍 {{ job.location }}</span>
-        <span class="meta-item">🕐 {{ job.publishedAt | timeAgo }}</span>
-        <span *ngIf="job.salary" class="badge badge-secondary salary-badge">
-          💰 {{ job.salary }}
-        </span>
+      <!-- Meta info -->
+      <div class="flex flex-wrap items-center gap-y-2 gap-x-4 mb-5">
+        <div class="flex items-center gap-1.5 text-slate-500 text-xs font-medium">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          {{ job.location }}
+        </div>
+        <div class="flex items-center gap-1.5 text-slate-500 text-xs font-medium">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          {{ job.publishedAt | timeAgo }}
+        </div>
+        <div *ngIf="job.salary" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold uppercase tracking-wider">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+          {{ job.salary }}
+        </div>
       </div>
 
-      <p class="job-description">
-        {{ job.description | slice:0:180 }}{{ job.description.length > 180 ? '...' : '' }}
+      <!-- Description -->
+      <p class="text-slate-600 text-sm leading-relaxed mb-6 line-clamp-2">
+        {{ job.description }}
       </p>
 
-      <div class="job-card-footer">
-        <a [href]="job.url" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
-          Voir l'offre ↗
+      <!-- Footer Actions -->
+      <div class="flex items-center justify-between pt-4 border-t border-slate-50">
+        <a [href]="job.url" target="_blank" rel="noopener noreferrer" 
+          class="inline-flex items-center gap-2 text-sm font-bold text-indigo-600 hover:text-indigo-700 transition-colors group/link">
+          Consulter l'offre
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 transition-transform group-hover/link:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <line x1="7" y1="17" x2="17" y2="7"></line>
+            <polyline points="7 7 17 7 17 17"></polyline>
+          </svg>
         </a>
+        
         <button
           *ngIf="isLoggedIn"
-          class="btn btn-ghost btn-sm"
           (click)="trackApplication()"
           [disabled]="isTracked"
+          class="px-5 py-2 rounded-xl text-xs font-bold transition-all"
+          [class.bg-indigo-600]="!isTracked"
+          [class.text-white]="!isTracked"
+          [class.hover:bg-indigo-700]="!isTracked"
+          [class.shadow-lg]="!isTracked"
+          [class.shadow-indigo-100]="!isTracked"
+          [class.bg-slate-100]="isTracked"
+          [class.text-slate-500]="isTracked"
         >
-          {{ isTracked ? '✅ Suivi' : '📋 Candidature' }}
+          {{ isTracked ? 'Candidature suivie' : 'Suivre ma candidature' }}
         </button>
       </div>
 
-      <div *ngIf="feedbackMessage" class="feedback-toast">
-        {{ feedbackMessage }}
+      <!-- Feedback Toast -->
+      <div *ngIf="feedbackMessage" 
+        class="absolute -bottom-4 left-6 bg-slate-900 px-4 py-2 rounded-lg shadow-xl animate-in slide-in-from-bottom-2 fade-in duration-300">
+        <p class="text-white text-[10px] font-bold">{{ feedbackMessage }}</p>
       </div>
     </div>
   `,
-  styles: [`
-    .job-card { padding: 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 0.75rem; position: relative; }
-    .job-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem; }
-    .job-info { flex: 1; min-width: 0; }
-    .job-title { font-size: 1rem; font-weight: 600; color: var(--text-primary); line-height: 1.4; margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .job-company { font-size: 0.85rem; color: var(--primary); font-weight: 500; }
-    .fav-btn { flex-shrink: 0; width: 36px; height: 36px; font-size: 1.1rem; }
-    .job-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 0.6rem; }
-    .meta-item { font-size: 0.8rem; color: var(--text-secondary); }
-    .salary-badge { font-size: 0.78rem; }
-    .job-description { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.6; }
-    .job-card-footer { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
-    .feedback-toast { position: absolute; bottom: -10px; left: 1.5rem; background: var(--text-primary); color: white; font-size: 0.78rem; padding: 0.3rem 0.75rem; border-radius: 20px; animation: fadeInUp 0.2s ease; }
-    @keyframes fadeInUp { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-    @media (max-width: 480px) { .job-title { white-space: normal; } }
-  `]
+  styles: []
 })
 export class JobCardComponent implements OnInit {
   @Input() job!: Job;
@@ -121,7 +147,7 @@ export class JobCardComponent implements OnInit {
           apiSource: this.job.apiSource
         };
         this.store.dispatch(FavoritesActions.addFavorite({ favorite }));
-        this.showFeedback('Ajouté aux favoris ❤️');
+        this.showFeedback('Ajouté aux favoris');
       }
     }).unsubscribe();
   }
@@ -146,9 +172,9 @@ export class JobCardComponent implements OnInit {
     this.applicationService.addApplication(application).subscribe({
       next: () => {
         this.isTracked = true;
-        this.showFeedback('Candidature ajoutée ✅');
+        this.showFeedback('Candidature suivie');
       },
-      error: () => this.showFeedback('Erreur lors de l\'ajout')
+      error: () => this.showFeedback('Une erreur est survenue')
     });
   }
 
