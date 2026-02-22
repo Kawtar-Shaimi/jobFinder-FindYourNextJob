@@ -1,8 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
 import { Job } from '../../../core/models/job.model';
 import { AuthService } from '../../../core/services/auth.service';
 import { ApplicationService } from '../../../core/services/application.service';
+import { selectIsFavorite, selectFavoriteByOfferId } from '../../../store/favorites/favorites.selectors';
+import * as FavoritesActions from '../../../store/favorites/favorites.actions';
 import { FavoriteOffer } from '../../../core/models/favorite.model';
 import { Application } from '../../../core/models/application.model';
 import { TimeAgoPipe } from '../../pipes/time-ago.pipe';
@@ -21,9 +25,11 @@ import { TimeAgoPipe } from '../../pipes/time-ago.pipe';
         <button
           *ngIf="isLoggedIn"
           class="btn-icon fav-btn"
+          [class.active]="isFavorite$ | async"
           (click)="toggleFavorite()"
+          [title]="(isFavorite$ | async) ? 'Retirer des favoris' : 'Ajouter aux favoris'"
         >
-          🤍
+          {{ (isFavorite$ | async) ? '❤️' : '🤍' }}
         </button>
       </div>
 
@@ -79,20 +85,45 @@ export class JobCardComponent implements OnInit {
   @Input() job!: Job;
   @Input() isTracked = false;
 
+  isFavorite$!: Observable<boolean>;
   isLoggedIn = false;
   feedbackMessage = '';
 
   constructor(
+    private store: Store,
     private authService: AuthService,
     private applicationService: ApplicationService
   ) { }
 
   ngOnInit(): void {
     this.isLoggedIn = this.authService.isLoggedIn();
+    this.isFavorite$ = this.store.select(selectIsFavorite(this.job.id));
   }
 
   toggleFavorite(): void {
-    this.showFeedback('Mode dégradé : Favoris désactivés un instant');
+    const user = this.authService.getCurrentUser();
+    if (!user) return;
+
+    this.store.select(selectFavoriteByOfferId(this.job.id)).subscribe(existing => {
+      if (existing) {
+        this.store.dispatch(FavoritesActions.removeFavorite({ id: existing.id!, offerId: this.job.id }));
+        this.showFeedback('Retiré des favoris');
+      } else {
+        const favorite: FavoriteOffer = {
+          userId: user.id,
+          offerId: this.job.id,
+          title: this.job.title,
+          company: this.job.company,
+          location: this.job.location,
+          url: this.job.url,
+          salary: this.job.salary,
+          publishedAt: this.job.publishedAt,
+          apiSource: this.job.apiSource
+        };
+        this.store.dispatch(FavoritesActions.addFavorite({ favorite }));
+        this.showFeedback('Ajouté aux favoris ❤️');
+      }
+    }).unsubscribe();
   }
 
   trackApplication(): void {

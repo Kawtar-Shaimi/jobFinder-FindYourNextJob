@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { JobService } from '../../core/services/job.service';
@@ -12,6 +13,7 @@ import { PaginationComponent } from '../../shared/components/pagination/paginati
 import { SpinnerComponent } from '../../shared/components/spinner/spinner.component';
 import { SearchFiltersComponent } from '../../shared/components/search-filters/search-filters.component';
 import { JobStatsComponent } from '../../shared/components/job-stats/job-stats.component';
+import { loadFavorites } from '../../store/favorites/favorites.actions';
 
 @Component({
   selector: 'app-home',
@@ -117,7 +119,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private jobService: JobService,
     private authService: AuthService,
-    private applicationService: ApplicationService
+    private applicationService: ApplicationService,
+    private store: Store
   ) {
     this.searchForm = this.fb.group({
       keyword: [''],
@@ -128,6 +131,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     const user = this.authService.getCurrentUser();
     if (user) {
+      this.store.dispatch(loadFavorites({ userId: user.id }));
       this.loadTrackedApplications(user.id);
     }
   }
