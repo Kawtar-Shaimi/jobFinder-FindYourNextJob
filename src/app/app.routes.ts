@@ -46,7 +46,12 @@ export const routes: Routes = [
             import('./features/profile/profile.component').then(m => m.ProfileComponent)
     },
     {
+        path: 'not-found',
+        loadComponent: () =>
+            import('./features/not-found/not-found.component').then(m => m.NotFoundComponent)
+    },
+    {
         path: '**',
-        redirectTo: 'home'
+        redirectTo: 'not-found'
     }
 ];
