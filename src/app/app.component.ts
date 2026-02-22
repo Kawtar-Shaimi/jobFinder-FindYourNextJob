@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { NavbarComponent } from './shared/components/navbar/navbar.component';
 import { FooterComponent } from './shared/components/footer/footer.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent, FooterComponent],
+  imports: [CommonModule, RouterOutlet, NavbarComponent, FooterComponent],
   template: `
     <div class="app-wrapper">
       <app-navbar></app-navbar>
@@ -24,6 +25,7 @@ import { FooterComponent } from './shared/components/footer/footer.component';
     }
     .main-content {
       flex: 1;
+      padding-top: 64px; /* Space for fixed navbar */
     }
   `]
 })

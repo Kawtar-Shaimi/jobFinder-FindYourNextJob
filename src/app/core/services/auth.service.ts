@@ -54,8 +54,14 @@ export class AuthService {
     }
 
     getCurrentUser(): AuthUser | null {
-        const data = sessionStorage.getItem(this.storageKey);
-        return data ? JSON.parse(data) : null;
+        try {
+            const data = sessionStorage.getItem(this.storageKey);
+            return data ? JSON.parse(data) : null;
+        } catch (e) {
+            console.error('Error parsing user session:', e);
+            sessionStorage.removeItem(this.storageKey);
+            return null;
+        }
     }
 
     isLoggedIn(): boolean {
