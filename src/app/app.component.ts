@@ -1,26 +1,30 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './shared/components/navbar/navbar.component';
+import { FooterComponent } from './shared/components/footer/footer.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent],
+  imports: [RouterOutlet, NavbarComponent, FooterComponent],
   template: `
-    <app-navbar></app-navbar>
-    <main class="main-content">
-      <router-outlet></router-outlet>
-    </main>
+    <div class="app-wrapper">
+      <app-navbar></app-navbar>
+      <main class="main-content">
+        <router-outlet></router-outlet>
+      </main>
+      <app-footer></app-footer>
+    </div>
   `,
   styles: [`
+    .app-wrapper {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
     .main-content {
-      min-height: calc(100vh - 64px);
-      padding-top: 64px;
+      flex: 1;
     }
   `]
 })
-export class AppComponent implements OnInit {
-  title = 'JobFinder';
-
-  ngOnInit(): void { }
-}
+export class AppComponent { }
