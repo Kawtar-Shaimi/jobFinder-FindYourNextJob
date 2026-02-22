@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { FavoriteOffer } from '../models/favorite.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
     providedIn: 'root'
 })
 export class FavoriteService {
-    private apiUrl = 'http://localhost:3000/favoritesOffers';
+    private apiUrl = `${environment.jsonServerUrl}/favoritesOffers`;
 
     constructor(private http: HttpClient) { }
 
@@ -21,5 +22,9 @@ export class FavoriteService {
 
     removeFavorite(id: number): Observable<void> {
         return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    }
+
+    isFavorite(userId: number, offerId: string): Observable<FavoriteOffer[]> {
+        return this.http.get<FavoriteOffer[]>(`${this.apiUrl}?userId=${userId}&offerId=${offerId}`);
     }
 }
