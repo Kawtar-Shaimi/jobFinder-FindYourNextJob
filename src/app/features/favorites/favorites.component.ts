@@ -15,57 +15,100 @@ import { TimeAgoPipe } from '../../shared/pipes/time-ago.pipe';
   standalone: true,
   imports: [CommonModule, RouterLink, SpinnerComponent, TimeAgoPipe],
   template: `
-    <div class="page-container">
-      <div class="container">
-        <div class="page-header">
-          <div style="display:flex; align-items:center; gap:0.75rem;">
-            <h1>❤️ Mes Favoris</h1>
-            <span class="badge badge-primary" *ngIf="(favorites$ | async)?.length! > 0">{{ (favorites$ | async)?.length }}</span>
+    <div class="min-h-[calc(100vh-64px)] pt-24 pb-16 bg-slate-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Page Header -->
+        <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div class="max-w-2xl">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-100">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.84-8.84 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+              </div>
+              <h1 class="text-3xl font-black text-slate-900 tracking-tight">Mes Favoris</h1>
+              <span *ngIf="(favorites$ | async)?.length! > 0" class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-black tracking-widest uppercase">
+                {{ (favorites$ | async)?.length }}
+              </span>
+            </div>
+            <p class="text-slate-500 font-medium">Retrouvez toutes les opportunités que vous avez sauvegardées pour plus tard.</p>
           </div>
-          <p class="text-muted">Les offres d'emploi que vous avez sauvegardées</p>
+          
+          <a routerLink="/home" class="inline-flex items-center gap-2 text-sm font-bold text-indigo-600 hover:text-indigo-700 transition-colors group">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            Explorer d'autres offres
+          </a>
         </div>
 
-        <app-spinner *ngIf="loading$ | async"></app-spinner>
+        <div *ngIf="loading$ | async" class="py-20">
+          <app-spinner></app-spinner>
+        </div>
 
         <!-- Empty state -->
-        <div *ngIf="!(loading$ | async) && (favorites$ | async)?.length === 0" class="empty-state">
-          <div class="empty-state-icon">🤍</div>
-          <h3>Vous n'avez pas encore de favoris</h3>
-          <p>Explorez les offres d'emploi et cliquez sur le cœur pour sauvegarder celles qui vous intéressent.</p>
-          <a routerLink="/home" class="btn btn-primary">Rechercher des offres</a>
+        <div *ngIf="!(loading$ | async) && (favorites$ | async)?.length === 0" 
+          class="text-center py-20 px-6 bg-white border border-dashed border-slate-200 rounded-3xl max-w-2xl mx-auto shadow-sm">
+          <div class="w-20 h-20 bg-slate-50 text-slate-300 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-slate-800 mb-2">Aucun favori pour le moment</h3>
+          <p class="text-slate-500 max-w-sm mx-auto mb-10">Parcourez les offres d'emploi et enregistrez celles qui correspondent à vos ambitions.</p>
+          <a routerLink="/home" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg shadow-indigo-100 transition-all">
+            Découvrir des offres
+          </a>
         </div>
 
         <!-- Favorites Grid -->
-        <div class="favorites-grid" *ngIf="(favorites$ | async)?.length! > 0">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" *ngIf="(favorites$ | async)?.length! > 0">
           <div
-            class="fav-card card"
+            class="bg-white border border-slate-200 rounded-2xl p-6 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-100/40 hover:-translate-y-1 group relative flex flex-col h-full"
             *ngFor="let fav of favorites$ | async"
           >
-            <div class="fav-card-header">
-              <div>
-                <h3 class="fav-title">{{ fav.title }}</h3>
-                <p class="fav-company">{{ fav.company }}</p>
+            <div class="flex justify-between items-start mb-4">
+              <div class="flex-1 min-w-0 pr-8">
+                <h3 class="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition-colors truncate mb-1">
+                  {{ fav.title }}
+                </h3>
+                <div class="flex items-center gap-2 text-indigo-600 font-semibold text-sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                  {{ fav.company }}
+                </div>
               </div>
               <button
-                class="btn-icon active"
                 (click)="removeFavorite(fav)"
+                class="absolute top-4 right-4 w-9 h-9 bg-red-50 text-red-500 rounded-full flex items-center justify-center transition-all hover:bg-red-100 group/btn"
                 title="Retirer des favoris"
               >
-                ❤️
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 fill-current transition-transform group-hover/btn:scale-110" viewBox="0 0 24 24">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.84-8.84 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
               </button>
             </div>
 
-            <div class="fav-meta">
-              <span class="meta-item">📍 {{ fav.location }}</span>
-              <span class="meta-item" *ngIf="fav.salary">💰 {{ fav.salary }}</span>
-              <span class="meta-item">🕐 {{ fav.publishedAt | timeAgo }}</span>
+            <div class="flex flex-wrap items-center gap-y-2 gap-x-4 mb-auto pb-6">
+              <div class="flex items-center gap-1.5 text-slate-500 text-xs font-medium">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                {{ fav.location }}
+              </div>
+              <div *ngIf="fav.salary" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold uppercase tracking-wider">
+                {{ fav.salary }}
+              </div>
+              <div class="flex items-center gap-1.5 text-slate-400 text-[10px] font-bold uppercase tracking-widest ml-auto">
+                {{ fav.publishedAt | timeAgo }}
+              </div>
             </div>
 
-            <div class="fav-footer">
-              <a [href]="fav.url" target="_blank" class="btn btn-primary btn-sm">
-                Voir l'offre ↗
+            <div class="pt-5 border-t border-slate-50 flex items-center justify-between">
+              <a [href]="fav.url" target="_blank" class="inline-flex items-center gap-2 text-xs font-bold text-indigo-600 hover:text-indigo-700 transition-colors group/link">
+                Accéder à l'offre
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 transition-transform group-hover/link:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <line x1="7" y1="17" x2="17" y2="7"></line>
+                  <polyline points="7 7 17 7 17 17"></polyline>
+                </svg>
               </a>
-              <span class="badge badge-primary">{{ fav.apiSource }}</span>
+              <span class="bg-slate-100 text-slate-500 px-2.5 py-1 rounded text-[10px] font-black uppercase tracking-widest">{{ fav.apiSource }}</span>
             </div>
           </div>
         </div>
@@ -73,67 +116,7 @@ import { TimeAgoPipe } from '../../shared/pipes/time-ago.pipe';
       </div>
     </div>
   `,
-  styles: [`
-    .page-container { padding: 2rem 0 3rem; }
-    .page-header { margin-bottom: 2rem; }
-    .page-header h1 { font-size: 1.8rem; }
-
-    .favorites-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 1.25rem;
-    }
-
-    .fav-card {
-      padding: 1.25rem 1.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .fav-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 0.75rem;
-    }
-
-    .fav-title {
-      font-size: 0.95rem;
-      font-weight: 600;
-      line-height: 1.4;
-      margin-bottom: 0.2rem;
-    }
-
-    .fav-company {
-      font-size: 0.85rem;
-      color: var(--primary);
-      font-weight: 500;
-    }
-
-    .fav-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.6rem;
-    }
-
-    .meta-item {
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-    }
-
-    .fav-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-
-    @media (max-width: 480px) {
-      .favorites-grid { grid-template-columns: 1fr; }
-    }
-  `]
+  styles: []
 })
 export class FavoritesComponent implements OnInit {
   favorites$!: Observable<FavoriteOffer[]>;
