@@ -8,16 +8,20 @@ import { selectFavorites, selectFavoritesLoading } from '../../store/favorites/f
 import { removeFavorite, loadFavorites } from '../../store/favorites/favorites.actions';
 import { AuthService } from '../../core/services/auth.service';
 import { SpinnerComponent } from '../../shared/components/spinner/spinner.component';
+import { TimeAgoPipe } from '../../shared/pipes/time-ago.pipe';
 
 @Component({
-    selector: 'app-favorites',
-    standalone: true,
-    imports: [CommonModule, RouterLink, SpinnerComponent],
-    template: `
+  selector: 'app-favorites',
+  standalone: true,
+  imports: [CommonModule, RouterLink, SpinnerComponent, TimeAgoPipe],
+  template: `
     <div class="page-container">
       <div class="container">
         <div class="page-header">
-          <h1>❤️ Mes Favoris</h1>
+          <div style="display:flex; align-items:center; gap:0.75rem;">
+            <h1>❤️ Mes Favoris</h1>
+            <span class="badge badge-primary" *ngIf="(favorites$ | async)?.length! > 0">{{ (favorites$ | async)?.length }}</span>
+          </div>
           <p class="text-muted">Les offres d'emploi que vous avez sauvegardées</p>
         </div>
 
@@ -54,7 +58,7 @@ import { SpinnerComponent } from '../../shared/components/spinner/spinner.compon
             <div class="fav-meta">
               <span class="meta-item">📍 {{ fav.location }}</span>
               <span class="meta-item" *ngIf="fav.salary">💰 {{ fav.salary }}</span>
-              <span class="meta-item">📅 {{ fav.publishedAt | date: 'dd/MM/yyyy' }}</span>
+              <span class="meta-item">🕐 {{ fav.publishedAt | timeAgo }}</span>
             </div>
 
             <div class="fav-footer">
@@ -69,7 +73,7 @@ import { SpinnerComponent } from '../../shared/components/spinner/spinner.compon
       </div>
     </div>
   `,
-    styles: [`
+  styles: [`
     .page-container { padding: 2rem 0 3rem; }
     .page-header { margin-bottom: 2rem; }
     .page-header h1 { font-size: 1.8rem; }
@@ -132,27 +136,27 @@ import { SpinnerComponent } from '../../shared/components/spinner/spinner.compon
   `]
 })
 export class FavoritesComponent implements OnInit {
-    favorites$!: Observable<FavoriteOffer[]>;
-    loading$!: Observable<boolean>;
+  favorites$!: Observable<FavoriteOffer[]>;
+  loading$!: Observable<boolean>;
 
-    constructor(
-        private store: Store,
-        private authService: AuthService,
-        private router: Router
-    ) { }
+  constructor(
+    private store: Store,
+    private authService: AuthService,
+    private router: Router
+  ) { }
 
-    ngOnInit(): void {
-        const user = this.authService.getCurrentUser();
-        if (!user) {
-            this.router.navigate(['/auth/login']);
-            return;
-        }
-        this.store.dispatch(loadFavorites({ userId: user.id }));
-        this.favorites$ = this.store.select(selectFavorites);
-        this.loading$ = this.store.select(selectFavoritesLoading);
+  ngOnInit(): void {
+    const user = this.authService.getCurrentUser();
+    if (!user) {
+      this.router.navigate(['/auth/login']);
+      return;
     }
+    this.store.dispatch(loadFavorites({ userId: user.id }));
+    this.favorites$ = this.store.select(selectFavorites);
+    this.loading$ = this.store.select(selectFavoritesLoading);
+  }
 
-    removeFavorite(fav: FavoriteOffer): void {
-        this.store.dispatch(removeFavorite({ id: fav.id!, offerId: fav.offerId }));
-    }
+  removeFavorite(fav: FavoriteOffer): void {
+    this.store.dispatch(removeFavorite({ id: fav.id!, offerId: fav.offerId }));
+  }
 }
