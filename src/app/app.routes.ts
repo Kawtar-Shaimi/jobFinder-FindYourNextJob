@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { HomeComponent } from './features/home/home.component';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
@@ -9,8 +10,7 @@ export const routes: Routes = [
     },
     {
         path: 'home',
-        loadComponent: () =>
-            import('./features/home/home.component').then(m => m.HomeComponent)
+        component: HomeComponent // Direct import, no lazy loading
     },
     {
         path: 'auth',
