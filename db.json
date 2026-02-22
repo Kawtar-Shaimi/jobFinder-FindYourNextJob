@@ -1,13 +1,34 @@
 {
-    "users": [
-        {
-            "id": 1,
-            "firstName": "Demo",
-            "lastName": "User",
-            "email": "demo@jobfinder.com",
-            "password": "Demo1234"
-        }
-    ],
-    "favoritesOffers": [],
-    "applications": []
+  "users": [
+    {
+      "id": "1",
+      "firstName": "Demo",
+      "lastName": "User",
+      "email": "demo@jobfinder.com",
+      "password": "Demo1234"
+    },
+    {
+      "id": "9bcb",
+      "firstName": "SHAIMI",
+      "lastName": "Kawtar",
+      "email": "kawtar.shaimi8@gmail.com",
+      "password": "kawtar@123"
+    }
+  ],
+  "favoritesOffers": [],
+  "applications": [
+    {
+      "id": "118d",
+      "userId": "9bcb",
+      "offerId": "remotive_2069746",
+      "apiSource": "remotive",
+      "title": "Tech Lead Full-Stack Rails Engineer",
+      "company": "Mitre Media",
+      "location": "USA, Canada, USA timezones",
+      "url": "https://remotive.com/remote-jobs/software-development/tech-lead-full-stack-rails-engineer-2069746",
+      "status": "en_attente",
+      "notes": "",
+      "dateAdded": "2026-02-22T18:13:25.913Z"
+    }
+  ]
 }

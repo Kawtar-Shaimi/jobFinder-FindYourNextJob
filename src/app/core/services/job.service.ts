@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from '@angular/core'; // Remotive Integration
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
@@ -9,72 +9,54 @@ import { environment } from '../../../environments/environment';
     providedIn: 'root'
 })
 export class JobService {
-    private appId = environment.adzuna.appId;
-    private apiKey = environment.adzuna.apiKey;
-    private baseUrl = environment.adzuna.baseUrl;
+    private baseUrl = environment.remotive.baseUrl;
 
     constructor(private http: HttpClient) { }
 
     searchJobs(keyword: string, location: string, page: number = 1): Observable<{ jobs: Job[]; total: number }> {
-        return this.searchAdzuna(keyword, location, page);
-    }
+        // Remotive API doesn't support traditional pagination with a 'page' param in the same way, 
+        // but we can simulate it or just fetch the results.
+        // Usually: https://remotive.com/api/remote-jobs?search=keyword&limit=20
 
-    private searchAdzuna(keyword: string, location: string, page: number): Observable<{ jobs: Job[]; total: number }> {
-        let params = new HttpParams()
-            .set('app_id', this.appId)
-            .set('app_key', this.apiKey)
-            .set('results_per_page', '20')
-            .set('what', keyword)
-            .set('content-type', 'application/json');
-
+        let params = new HttpParams();
+        if (keyword && keyword.trim()) {
+            params = params.set('search', keyword.trim());
+        }
+        // Remotive is remote-only, so location is less relevant but can be part of search
         if (location && location.trim()) {
-            params = params.set('where', location.trim());
+            params = params.set('location', location.trim());
         }
 
-        const url = `${this.baseUrl}/gb/${page}`;
-
-        return this.http.get<any>(url, { params }).pipe(
+        return this.http.get<any>(this.baseUrl, { params }).pipe(
             map(data => {
-                const total: number = data?.count || 0;
-                const results: any[] = data?.results || [];
+                const results: any[] = data?.jobs || [];
+                const total: number = data?.['0-count'] || results.length;
 
-                // Filtre : uniquement les offres dont le TITRE contient le mot-clé
-                const filtered = keyword
-                    ? results.filter((item: any) =>
-                        (item.title || '').toLowerCase().includes(keyword.toLowerCase())
-                    )
-                    : results;
+                const jobs: Job[] = results.map((item: any) => this.mapRemotiveJob(item));
 
-                const jobs: Job[] = filtered.map((item: any) => this.mapAdzunaJob(item));
-
-                // Tri par date de publication (plus récent en premier)
+                // Sort by publication date (most recent first)
                 jobs.sort((a, b) =>
                     new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
                 );
 
+                // For testing purposes, we limit to 20 per "page" logic if needed
                 return { jobs, total };
             }),
             catchError(() => of({ jobs: [], total: 0 }))
         );
     }
 
-    private mapAdzunaJob(item: any): Job {
+    private mapRemotiveJob(item: any): Job {
         return {
-            id: `adzuna_${item.id}`,
+            id: `remotive_${item.id}`,
             title: item.title || 'Poste non précisé',
-            company: item.company?.display_name || 'Entreprise non précisée',
-            location: item.location?.display_name || 'Localisation non précisée',
+            company: item.company_name || 'Entreprise non précisée',
+            location: item.candidate_required_location || 'Remote',
             description: item.description || 'Aucune description disponible.',
-            url: item.redirect_url || '#',
-            salary: item.salary_min
-                ? `${this.formatSalary(item.salary_min)} - ${this.formatSalary(item.salary_max || item.salary_min)} £`
-                : undefined,
-            publishedAt: item.created || new Date().toISOString(),
-            apiSource: 'adzuna'
+            url: item.url || '#',
+            salary: item.salary || undefined,
+            publishedAt: item.publication_date || new Date().toISOString(),
+            apiSource: 'remotive'
         };
-    }
-
-    private formatSalary(value: number): string {
-        return Math.round(value).toLocaleString('fr-FR');
     }
 }

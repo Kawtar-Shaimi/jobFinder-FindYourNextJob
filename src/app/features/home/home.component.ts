@@ -85,16 +85,6 @@ import { loadFavorites } from '../../store/favorites/favorites.actions';
           <span class="font-medium">{{ errorMessage }}</span>
         </div>
 
-        <!-- Empty state - Initial -->
-        <div *ngIf="!hasSearched && !loading" class="text-center py-20 bg-slate-50/50 border border-dashed border-slate-200 rounded-3xl">
-          <div class="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
-             <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-               <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-             </svg>
-          </div>
-          <h3 class="text-xl font-bold text-slate-800 mb-2">Prêt à commencer ?</h3>
-          <p class="text-slate-500 max-w-sm mx-auto">Saisissez un titre de poste ou une ville pour explorer les opportunités disponibles.</p>
-        </div>
 
         <!-- No results -->
         <div *ngIf="hasSearched && !loading && jobs.length === 0 && !errorMessage" class="text-center py-20">
@@ -158,6 +148,8 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.store.dispatch(loadFavorites({ userId: user.id }));
       this.loadTrackedApplications(user.id);
     }
+    // Load initial jobs (trending/latest)
+    this.doSearch('', '', 1);
   }
 
   ngOnDestroy(): void {
@@ -175,9 +167,8 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   onSearch(): void {
     const { keyword, location } = this.searchForm.value;
-    if (!keyword && !location) return;
     this.currentPage = 1;
-    this.doSearch(keyword, location, 1);
+    this.doSearch(keyword || '', location || '', 1);
   }
 
   onPageChange(page: number): void {
