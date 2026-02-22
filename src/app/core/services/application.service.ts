@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Application } from '../models/application.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
     providedIn: 'root'
 })
 export class ApplicationService {
-    private apiUrl = 'http://localhost:3000/applications';
+    private apiUrl = `${environment.jsonServerUrl}/applications`;
 
     constructor(private http: HttpClient) { }
 
@@ -25,5 +26,9 @@ export class ApplicationService {
 
     deleteApplication(id: number): Observable<void> {
         return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    }
+
+    isAlreadyTracked(userId: number, offerId: string): Observable<Application[]> {
+        return this.http.get<Application[]>(`${this.apiUrl}?userId=${userId}&offerId=${offerId}`);
     }
 }
