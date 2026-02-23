@@ -6,8 +6,29 @@
       "lastName": "User",
       "email": "demo@jobfinder.com",
       "password": "Demo1234"
+    },
+    {
+      "id": "4897",
+      "firstName": "Salma",
+      "lastName": "Hamdi",
+      "email": "salmahamdi@gmail.com",
+      "password": "salma@123"
     }
   ],
   "favoritesOffers": [],
-  "applications": []
+  "applications": [
+    {
+      "id": "d65a",
+      "userId": "9bcb",
+      "offerId": "remotive_2088635",
+      "apiSource": "remotive",
+      "title": "Order Management and Operation Manager",
+      "company": "Exaware",
+      "location": "USA",
+      "url": "https://remotive.com/remote-jobs/project-management/order-management-and-operation-manager-2088635",
+      "status": "en_attente",
+      "notes": "",
+      "dateAdded": "2026-02-23T01:26:53.359Z"
+    }
+  ]
 }

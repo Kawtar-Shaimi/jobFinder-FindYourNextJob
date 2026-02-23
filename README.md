@@ -74,3 +74,12 @@ src/
 ## Compte démo
 - Email : `demo@jobfinder.com`
 - Mot de passe : `Demo1234`
+
+## Contribution
+
+Toutes les contributions sont les bienvenues ! Pour contribuer :
+1. Forkez le projet.
+2. Créez une branche pour votre fonctionnalité (`git checkout -b feature/AmazingFeature`).
+3. Commitez vos changements (`git commit -m 'Add some AmazingFeature'`).
+4. Pushez vers la branche (`git push origin feature/AmazingFeature`).
+5. Ouvrez une Pull Request.
