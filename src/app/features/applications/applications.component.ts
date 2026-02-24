@@ -218,7 +218,7 @@ export class ApplicationsComponent implements OnInit {
   filteredApplications: Application[] = [];
   loading = false;
   activeFilter = 'all';
-  deletingId: number | null = null;
+  deletingId: string | null = null;
 
   constructor(
     private applicationService: ApplicationService,
@@ -294,7 +294,7 @@ export class ApplicationsComponent implements OnInit {
     this.deletingId = this.deletingId === app.id ? null : app.id!;
   }
 
-  deleteApp(id: number): void {
+  deleteApp(id: string): void {
     this.applicationService.deleteApplication(id).subscribe({
       next: () => {
         this.applications = this.applications.filter(a => a.id !== id);

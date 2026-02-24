@@ -4,7 +4,7 @@ import { FavoriteOffer } from '../../core/models/favorite.model';
 // Load
 export const loadFavorites = createAction(
     '[Favorites] Load Favorites',
-    props<{ userId: number }>()
+    props<{ userId: string }>()
 );
 export const loadFavoritesSuccess = createAction(
     '[Favorites] Load Favorites Success',
@@ -32,11 +32,11 @@ export const addFavoriteFailure = createAction(
 // Remove
 export const removeFavorite = createAction(
     '[Favorites] Remove Favorite',
-    props<{ id: number; offerId: string }>()
+    props<{ id: string; offerId: string }>()
 );
 export const removeFavoriteSuccess = createAction(
     '[Favorites] Remove Favorite Success',
-    props<{ id: number }>()
+    props<{ id: string }>()
 );
 export const removeFavoriteFailure = createAction(
     '[Favorites] Remove Favorite Failure',

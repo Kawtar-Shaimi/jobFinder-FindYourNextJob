@@ -1,6 +1,6 @@
 export interface FavoriteOffer {
-    id?: number;
-    userId: number;
+    id?: string;
+    userId: string;
     offerId: string;
     title: string;
     company: string;

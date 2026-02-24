@@ -157,7 +157,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  private loadTrackedApplications(userId: number): void {
+  private loadTrackedApplications(userId: string): void {
     this.applicationService.getApplicationsByUser(userId).subscribe({
       next: (apps) => {
         this.trackedOfferIds = new Set(apps.map(a => a.offerId));

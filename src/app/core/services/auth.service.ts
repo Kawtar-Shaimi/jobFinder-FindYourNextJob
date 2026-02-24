@@ -37,7 +37,7 @@ export class AuthService {
                 }
                 const user = users[0];
                 const authUser: AuthUser = {
-                    id: user.id!,
+                    id: String(user.id),
                     firstName: user.firstName,
                     lastName: user.lastName,
                     email: user.email
@@ -68,11 +68,11 @@ export class AuthService {
         return !!this.getCurrentUser();
     }
 
-    updateUser(id: number, data: Partial<User>): Observable<User> {
+    updateUser(id: string, data: Partial<User>): Observable<User> {
         return this.http.patch<User>(`${this.apiUrl}/${id}`, data).pipe(
             map(user => {
                 const authUser: AuthUser = {
-                    id: user.id!,
+                    id: String(user.id),
                     firstName: user.firstName,
                     lastName: user.lastName,
                     email: user.email
@@ -83,11 +83,11 @@ export class AuthService {
         );
     }
 
-    deleteUser(id: number): Observable<void> {
+    deleteUser(id: string): Observable<void> {
         return this.http.delete<void>(`${this.apiUrl}/${id}`);
     }
 
-    getUserById(id: number): Observable<User> {
+    getUserById(id: string): Observable<User> {
         return this.http.get<User>(`${this.apiUrl}/${id}`);
     }
 }

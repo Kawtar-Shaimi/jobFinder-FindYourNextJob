@@ -1,8 +1,8 @@
 export type ApplicationStatus = 'en_attente' | 'accepte' | 'refuse';
 
 export interface Application {
-    id?: number;
-    userId: number;
+    id?: string;
+    userId: string;
     offerId: string;
     apiSource: string;
     title: string;
